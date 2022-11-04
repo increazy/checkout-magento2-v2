@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<config
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd"
+>
+    <default>
+        <increazy_checkoutv2>
+            <button>
+                <class>button btn primary action</class>
+            </button>
+        </increazy_checkoutv2>
+
+        <increazy_onetap>
+            <general>
+                <text>Compra com 1 clique</text>
+                <class>button btn primary action</class>
+                <container_class>container row</container_class>
+            </general>
+        </increazy_onetap>
+
+        <payment>
+            <increazy-billet>
+                <active>1</active>
+                <model>Increazy\CheckoutV2\Model\Billet</model>
+                <order_status>pending</order_status>
+                <title>Boleto</title>
+                <allowspecific>0</allowspecific>
+                <group>increazy</group>
+            </increazy-billet>
+
+            <increazy-credit>
+                <active>1</active>
+                <model>Increazy\CheckoutV2\Model\Credit</model>
+                <order_status>pending</order_status>
+                <title>Crédito</title>
+                <allowspecific>0</allowspecific>
+                <group>increazy</group>
+            </increazy-credit>
+
+            <increazy-creditcard>
+                <active>1</active>
+                <model>Increazy\CheckoutV2\Model\Creditcard</model>
+                <order_status>pending</order_status>
+                <title>Cartão de Crédito</title>
+                <allowspecific>0</allowspecific>
+                <group>increazy</group>
+            </increazy-creditcard>
+
+            <increazy-onetap>
+                <active>1</active>
+                <model>Increazy\CheckoutV2\Model\Onetap</model>
+                <order_status>pending</order_status>
+                <title>Cartão de Crédito Salvo</title>
+                <allowspecific>0</allowspecific>
+                <group>increazy</group>
+            </increazy-onetap>
+
+            <increazy-debitcard>
+                <active>1</active>
+                <model>Increazy\CheckoutV2\Model\Debitcard</model>
+                <order_status>pending</order_status>
+                <title>Cartão de Débito</title>
+                <allowspecific>0</allowspecific>
+                <group>increazy</group>
+            </increazy-debitcard>
+
+            <increazy-free>
+                <active>1</active>
+                <model>Increazy\CheckoutV2\Model\Free</model>
+                <order_status>pending</order_status>
+                <title>Grátis</title>
+                <allowspecific>0</allowspecific>
+                <group>increazy</group>
+            </increazy-free>
+
+            <increazy-other>
+                <active>1</active>
+                <model>Increazy\CheckoutV2\Model\Other</model>
+                <order_status>pending</order_status>
+                <title>Outro</title>
+                <allowspecific>0</allowspecific>
+                <group>increazy</group>
+            </increazy-other>
+
+            <increazy-pix>
+                <active>1</active>
+                <model>Increazy\CheckoutV2\Model\Pix</model>
+                <order_status>pending</order_status>
+                <title>Pix</title>
+                <allowspecific>0</allowspecific>
+                <group>increazy</group>
+            </increazy-pix>
+
+            <increazy-ted>
+                <active>1</active>
+                <model>Increazy\CheckoutV2\Model\Ted</model>
+                <order_status>pending</order_status>
+                <title>TED</title>
+                <allowspecific>0</allowspecific>
+                <group>increazy</group>
+            </increazy-ted>
+        </payment>
+    </default>
+</config>

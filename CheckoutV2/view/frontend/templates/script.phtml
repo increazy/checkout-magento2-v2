@@ -1,0 +1,66 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+$scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
+$appID = $scopeConfig->getValue('increazy_general/general/app', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$isTest = $scopeConfig->getValue('increazy_general/general/test', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
+$enabledOnetap = $scopeConfig->getValue('increazy_onetap/general/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
+$env = $isTest ? '.test' : '';
+
+$customerId = '';
+$context = $objectManager->get('Magento\Framework\App\Http\Context');
+$isLoggedIn = $context->getValue(\Magento\Customer\Model\Context::CONTEXT_AUTH);
+
+$increazyHash = function ($userID) use($scopeConfig) {
+  if ($userID == '') return '';
+  $token = base64_decode($scopeConfig->getValue('increazy_general/general/hash', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+  $parts = explode(':', $token);
+  $key = substr(hash('sha256', $parts[0]), 0, 32);
+  $iv = substr(hash('sha256', $parts[1]), 0, 16);
+
+  $encrypted_data = openssl_encrypt($userID, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
+  return base64_encode($encrypted_data);
+};
+
+if($isLoggedIn){
+    $customerSession = $objectManager->get('Magento\Customer\Model\SessionFactory')->create();
+    $customerId = $customerSession->getCustomer()->getId();
+    $customerId = $increazyHash($customerId);
+}
+
+
+$cart = $objectManager->get('\Magento\Checkout\Model\Cart');
+$quoteId = $cart->getQuote()->getId();
+
+$scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
+$hash = $scopeConfig->getValue('increazy_general/general/hash', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
+echo '<meta name="increazy-customer-logged" value="' . $customerId . '" />';
+echo '<meta name="increazy-cart-actived" value="' . $quoteId . '" />';
+?>
+
+
+<!-- BEGIN INCREAZY CHECKOUT -->
+<script>
+  var script = document.createElement('script');
+  script.src = "https://storage<?php echo $env ;?>.increazy.com/scripts/checkout.js?app=<?php echo $appID ;?>&type=ecommerce&tm=" + (+ new Date());
+  document.head.appendChild(script);
+</script>
+<!-- END INCREAZY CHECKOUT -->
+<?php if ($enabledOnetap) { ?>
+
+<!-- BEGIN INCREAZY ONETAP -->
+<script>
+  var script = document.createElement('script');
+  script.src = "https://storage<?php echo $env ;?>.increazy.com/scripts/onetap.js?app=<?php echo $appID ;?>&type=ecommerce&tm=" + (+ new Date());
+  document.head.appendChild(script);
+</script>
+<!-- END INCREAZY ONETAP -->
+<?php } ?>

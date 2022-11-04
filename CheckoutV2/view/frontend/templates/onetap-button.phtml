@@ -1,0 +1,91 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+$scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
+$enabledOnetap = $scopeConfig->getValue('increazy_onetap/general/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$text = $scopeConfig->getValue('increazy_onetap/general/text', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$classes = $scopeConfig->getValue('increazy_onetap/general/class', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$style = $scopeConfig->getValue('increazy_onetap/general/css', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$classesContainer = $scopeConfig->getValue('increazy_onetap/general/container_class', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$styleContainer = $scopeConfig->getValue('increazy_onetap/general/container_css', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
+$_product = $block->getProduct();
+echo '<!-- BEGIN INCREAZY ONETAP ' . $enabledOnetap .' -->';
+
+if ($enabledOnetap) {
+?>
+<!-- BEGIN INCREAZY CHECKOUT BTN -->
+<style>
+    .increazy-onetap-container-button {
+        <?php echo $styleContainer ;?>
+    }
+
+    .increazy-onetap-button {
+        <?php echo $style ;?>
+    }
+</style>
+
+<div class="<?php echo $classesContainer; ?> increazy-onetap-container-button">
+    <button
+        type="button"
+        style="display:none"
+        id="increazy-onetap-btn"
+        onclick="initIncreazyOnetap()"
+        class="<?php echo $classes; ?> increazy-onetap-button"
+        title="<?php echo $text == '' ? 'Compra com 1 clique' : $block->escapeHtml($text); ?>"
+    >
+        <span>
+            <?php
+            echo $text == '' ? 'Compra com 1 clique' : $block->escapeHtml($text);
+            ?>
+        </span>
+    </button>
+</div>
+
+<script>
+    function inputsForObject(name) {
+        var arr = Array.prototype.slice.call(document.querySelectorAll('input[name*="' + name + '"]'));
+
+        return arr.reduce(function (o, i) {
+            var id = i.name.split('[')[1].replace(']', '');
+            o[id] = i.value;
+            return o;
+        }, {});
+    }
+
+    function increazyOnetap() {
+        setTimeout(function () {
+            var customerId = document.querySelector('meta[name="increazy-customer-logged"]').getAttribute('value');
+
+            if ([undefined, null, ''].includes(customerId)) {
+                customerId = localStorage.getItem('increazy-token');
+            }
+
+            console.log('customerId', customerId);
+
+            if (![undefined, null, ''].includes(customerId)) {
+                var increazyOnetapButton = document.getElementById('increazy-onetap-btn');
+                if (increazyOnetapButton) {
+                    window.increazyToken = customerId;
+                    return increazyOnetapButton.style.display = 'block';
+                }
+            }
+
+            increazyOnetap();
+        }, 100);
+    }
+
+    increazyOnetap();
+
+    function initIncreazyOnetap() {
+        var productId = <?= $_product->getId() ?>;
+        var query = {
+            super_attribute: inputsForObject('super_attribute'),
+            options: inputsForObject('options')
+        };
+
+        $increazyOneTap(window.increazyToken, productId, 'ecommerce', query);
+    }
+</script>
+<!-- END INCREAZY CHECKOUT BTN -->
+<?php } ?>

@@ -1,0 +1,64 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+$scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
+$text = $scopeConfig->getValue('increazy_checkoutv2/button/text', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$classes = $scopeConfig->getValue('increazy_checkoutv2/button/class', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$style = $scopeConfig->getValue('increazy_checkoutv2/button/css', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
+?>
+<!-- BEGIN INCREAZY CHECKOUT BTN -->
+<?php if ($block->isPossibleOnepageCheckout()) :?>
+    <style>
+        .increazy-checkout-button {
+            <?php echo $style ;?>
+        }
+
+        .increazy-checkout-button--hide {
+          display: none !important;
+        }
+    </style>
+
+    <button
+        type="button"
+        onclick="initIncreazy()"
+        data-role="proceed-to-checkout"
+        id="increazy-checkout-button"
+        class="<?php echo $classes; ?> increazy-checkout-button increazy-checkout-button--hide"
+        title="<?= $block->escapeHtmlAttr(__('Proceed to Checkout')) ?>"
+    >
+        <span>
+          <?php
+            if ($text) {
+              echo $block->escapeHtml($text);
+            } else {
+              echo $block->escapeHtml(__('Proceed to Checkout'));
+            }
+          ?>
+        </span>
+    </button>
+
+    <script>
+        function waitIncreazy(callback) {
+          setTimeout(function () {
+            if (window.$increazyCheckoutPay) {
+              return callback();
+            }
+
+            waitIncreazy(callback);
+          }, 20)
+        }
+
+        waitIncreazy(function () {
+          document.getElementById('increazy-checkout-button').classList.remove('increazy-checkout-button--hide');
+        });
+
+        function initIncreazy() {
+            var customerId = document.querySelector('meta[name="increazy-customer-logged"]').getAttribute('value');
+            var cartId = document.querySelector('meta[name="increazy-cart-actived"]').getAttribute('value');
+
+            window.$increazyCheckoutPay(cartId, customerId);
+        }
+    </script>
+<?php endif?>
+<!-- END INCREAZY CHECKOUT BTN -->

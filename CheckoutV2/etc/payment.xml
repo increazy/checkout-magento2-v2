@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<payment
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/payment.xsd"
+>
+    <groups>
+        <group id="increazy">
+            <label>Increazy Payment Methods</label>
+        </group>
+    </groups>
+
+    <methods>
+        <method name="increazy-billet">
+            <allow_multiple_address>1</allow_multiple_address>
+        </method>
+
+        <method name="increazy-credit">
+            <allow_multiple_address>1</allow_multiple_address>
+        </method>
+
+        <method name="increazy-creditcard">
+            <allow_multiple_address>1</allow_multiple_address>
+        </method>
+
+        <method name="increazy-onetap">
+            <allow_multiple_address>1</allow_multiple_address>
+        </method>
+
+        <method name="increazy-debitcard">
+            <allow_multiple_address>1</allow_multiple_address>
+        </method>
+
+        <method name="increazy-free">
+            <allow_multiple_address>1</allow_multiple_address>
+        </method>
+
+        <method name="increazy-other">
+            <allow_multiple_address>1</allow_multiple_address>
+        </method>
+
+        <method name="increazy-pix">
+            <allow_multiple_address>1</allow_multiple_address>
+        </method>
+
+        <method name="increazy-ted">
+            <allow_multiple_address>1</allow_multiple_address>
+        </method>
+    </methods>
+</payment>

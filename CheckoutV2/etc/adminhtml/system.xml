@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="increazy_tab" sortOrder="10">
+            <label>Increazy</label>
+        </tab>
+
+        <section id="increazy_general" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Geral</label>
+            <tab>increazy_tab</tab>
+            <resource>Increazy_CheckoutV2::main_configuration</resource>
+
+            <group id="general" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Configurações da Increazy</label>
+                <field id="hash" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Hash</label>
+                    <comment>Recupere esse hash no painel Increazy.</comment>
+                    <validate>required-entry no-whitespace</validate>
+                </field>
+
+                <field id="app" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Id da aplicação</label>
+                    <comment>AppId gerado no painel da Increazy.</comment>
+                    <validate>required-entry no-whitespace</validate>
+                </field>
+
+                <field id="test" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Usar ambiente de homologação (beta)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Marque como "Sim" se você estiver usando nosso ambiente de homologação</comment>
+                </field>
+            </group>
+        </section>
+
+        <section id="increazy_checkoutv2" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Checkout</label>
+            <tab>increazy_tab</tab>
+            <resource>Increazy_CheckoutV2::main_configuration</resource>
+
+            <group id="button" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Configurações *Ir para checkout*</label>
+                <field id="text" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Texto do botão</label>
+                    <comment>Caso deixe em branco iremos buscar pelo texto padrão do Magento.</comment>
+                </field>
+
+                <field id="class" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Classes do botão</label>
+                    <comment>Adicionaremos as classes no botão, exemplo: "button button-primary"</comment>
+                </field>
+
+                <field id="css" type="textarea" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>CSS do botão</label>
+                    <comment>Adicione aqui um código CSS para adicionarmos ao botão, exemplo: "background: white; padding: 10px;"</comment>
+                </field>
+            </group>
+        </section>
+
+
+        <section id="increazy_onetap" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Compra com 1 clique</label>
+            <tab>increazy_tab</tab>
+            <resource>Increazy_CheckoutV2::main_configuration</resource>
+
+            <group id="general" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Configuração 1 clique</label>
+                <field id="active" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ativar o compra com 1 clique</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Garanta que o checkout esteja ativado. Ao ativar, adicionaremos o botão de compra rápida na sua tela de produto.</comment>
+                </field>
+
+                <field id="text" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Texto do botão</label>
+                    <comment>Texto a ser mostrado no botão, por padrão será "Compra com 1 clique".</comment>
+                </field>
+
+                <field id="class" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Classes do botão</label>
+                    <comment>Adicionaremos as classes no botão, exemplo: "button button-primary"</comment>
+                </field>
+
+                <field id="css" type="textarea" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>CSS do botão</label>
+                    <comment>Adicione aqui um código CSS para adicionarmos ao botão, exemplo: "background: white; padding: 10px;"</comment>
+                </field>
+
+                <field id="container_class" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Classes do container botão</label>
+                    <comment>Adicionaremos as classes no container do botão, exemplo: "container row"</comment>
+                </field>
+
+                <field id="container_css" type="textarea" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>CSS do container botão</label>
+                    <comment>Adicione aqui um código CSS para adicionarmos ao container botão, exemplo: "display:flex; justify-content: center;"</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
