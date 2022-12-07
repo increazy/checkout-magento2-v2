@@ -8,18 +8,17 @@ abstract class CompleteQuote
 {
     public static function get(Quote $quote)
     {
-				$shippingAddress = $quote->getShippingAddress();
-        $shippingAddress->setCollectShippingRates(true)->collectShippingRates();
-				$quote->setTotalsCollectedFlag(true)->collectTotals();
-				$quote->collectTotals();
-				$quote->save();
+		$shippingAddress = $quote->getShippingAddress();
+		$shippingAddress->setCollectShippingRates(true)->collectShippingRates();
+		$quote->setTotalsCollectedFlag(true)->collectTotals();
+		$quote->collectTotals();
+		$quote->save();
 
-				$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-				$quote = $objectManager->get('Magento\Quote\Model\Quote')->load($quote->getId());
+		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+		$quote = $objectManager->get('Magento\Quote\Model\Quote')->load($quote->getId());
         $data = $quote->getData();
 
         return array_merge($data, [
-						'_edit' => 1,
             'totals'   => self::getTotals($quote),
             'shipping' => self::getShipping($quote),
             'items'    => self::getItems($quote),
@@ -68,6 +67,7 @@ abstract class CompleteQuote
                 'image'	          => self::getProductImage($item->getProduct()),
                 'thumbnail'		  => $item->getProduct()->getThumbnail(),
 				'price'			  => $item->getPrice(),
+				'stock'			  => self::getStock($item->getProduct()),
 				'discount_amount' => $item->getDiscountAmount(),
 				'qty'			  => $item->getQty(),
 				'total'			  => ($item->getRowTotal() - $item->getDiscountAmount()),
@@ -77,6 +77,14 @@ abstract class CompleteQuote
 
 		return $result;
 	}
+
+	private static function getStock($entity)
+    {
+		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $stockItem = $objectManager->get('Magento\CatalogInventory\Model\Stock\Item')->load($entity->getId(), 'product_id');
+
+        return $stockItem->getData();
+    }
 
     private static function getOptions($item) {
 		return $item->getProduct()
