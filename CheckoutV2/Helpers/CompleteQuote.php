@@ -63,7 +63,7 @@ abstract class CompleteQuote
                 'product_id'      => $item->getProduct()->getId(),
                 'sku'			  => $item->getProduct()->getSku(),
                 'name'		      => $item->getProduct()->getName(),
-                'url'		      => $item->getProduct()->getUrlPath(),
+                'url'		      => $item->getProduct()->getUrlKey(),
                 'image'	          => self::getProductImage($item->getProduct()),
                 'thumbnail'		  => $item->getProduct()->getThumbnail(),
 				'price'			  => $item->getPrice(),
@@ -83,7 +83,20 @@ abstract class CompleteQuote
 		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $stockItem = $objectManager->get('Magento\CatalogInventory\Model\Stock\Item')->load($entity->getId(), 'product_id');
 
-        return $stockItem->getData();
+		$stock = $stockItem->getData();
+		$stock['salable'] = $stock['qty'];
+
+		if (class_exists('\Magento\InventorySalesAdminUi\Model\GetSalableQuantityDataBySku')) {
+			$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+			$StockState = $objectManager->get('\Magento\InventorySalesAdminUi\Model\GetSalableQuantityDataBySku');
+			$qty = $StockState->execute($entity->getSku());
+
+			if (count($qty) > 0) {
+				$stock['salable'] = $qty[0]['qty'] ?? $stock['qty'];
+			}
+		}
+
+        return $stock;
     }
 
     private static function getOptions($item) {
