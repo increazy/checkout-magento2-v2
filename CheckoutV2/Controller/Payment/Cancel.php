@@ -76,10 +76,12 @@ class Cancel extends Controller
 
 
                 // $this->registry->register('isSecureArea','true');
-                $this->order->cancel()->save();
-                $this->order->delete();
+                
+                //$this->order->delete();
                 // $this->registry->unregister('isSecureArea');
             }
+            
+            $this->order->cancel()->save();
         }
 
         $objectManager->get('Magento\Framework\Registry')->unregister('isSecureArea');
