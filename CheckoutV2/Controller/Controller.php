@@ -66,6 +66,7 @@ abstract class Controller extends Action
         } catch (\Exception $e) {
             echo json_encode([
                 'message' => $e->getMessage(),
+                'trace' => $e->getTrace(),
             ]);
         }
     }
