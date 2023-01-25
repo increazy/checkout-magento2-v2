@@ -54,6 +54,7 @@ class Finish extends Controller
         $this->quote->load($body->quote_id);
 
         $this->quote->assignCustomer($customer);
+        $this->quote->setCustomerIsGuest(false);
         $this->quote->setPaymentMethod($body->payment_data->method);
         $this->quote->setInventoryProcessed(false);
         $this->quote->save();
