@@ -52,7 +52,7 @@ class Bridge extends Action
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
-        $hash = $scopeConfig->getValue('increazy/general/hash', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $hash = $scopeConfig->getValue('increazy_general/general/hash', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
         $token = base64_decode($hash);
         $parts = explode(':', $token);
