@@ -12,7 +12,7 @@ $isTest = $scopeConfig->getValue('increazy_general/general/test', \Magento\Store
 
 $enabledOnetap = $scopeConfig->getValue('increazy_onetap/general/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
-$env = $isTest ? '.test' : '';
+$env = $isTest ? '.homolog' : '';
 
 $customerId = '';
 $context = $objectManager->get('Magento\Framework\App\Http\Context');
