@@ -57,6 +57,8 @@ abstract class CompleteQuote
 		$items = $quote->getAllVisibleItems();
 		$result = [];
 
+		$quoteRate = $quote->getData('base_to_quote_rate');
+
 		foreach ($items as $item) {
 			$result[] = (object)[
 				'item_id'         => $item->getId(),
@@ -66,11 +68,11 @@ abstract class CompleteQuote
                 'url'		      => $item->getProduct()->getUrlKey(),
                 'image'	          => self::getProductImage($item->getProduct()),
                 'thumbnail'		  => $item->getProduct()->getThumbnail(),
-				'price'			  => $item->getPrice(),
+				'price'			  => $item->getPrice() * $quoteRate,
 				'stock'			  => self::getStock($item->getProduct()),
 				'discount_amount' => $item->getDiscountAmount(),
 				'qty'			  => $item->getQty(),
-				'total'			  => ($item->getRowTotal() - $item->getDiscountAmount()),
+				'total'			  => ($item->getRowTotal() - $item->getDiscountAmount()) * $quoteRate,
 				'options'		  => self::getOptions($item),
 			];
 		}
