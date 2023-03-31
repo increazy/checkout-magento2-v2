@@ -49,7 +49,7 @@ class Add extends Controller
         $requestInfo = new \Magento\Framework\DataObject([
 		    'product' => $body->product_id,
             'qty' =>  $body->qty,
-            'custom_price' => $product->getFinalPrice()
+            // 'custom_price' => $product->getFinalPrice()
         ]);
 
         if(isset($body->super_attribute)) {
