@@ -119,6 +119,11 @@ class Prepare extends Controller
             $order->setBaseTotalDue($order->getBaseTotalDue() + $body->tax);
         } else if ($body->tax > 0) {
             $order->setTaxAmount($order->getTaxAmount() + $body->tax);
+            
+            $order->setBaseGrandTotal($order->getBaseGrandTotal() + $body->tax);
+            $order->setTotalDue($order->getTotalDue() + $body->tax);
+            $order->setGrandTotal($order->getGrandTotal() + $body->tax);
+            $order->setBaseTotalDue($order->getBaseTotalDue() + $body->tax);
         }
 
         $order->save();
