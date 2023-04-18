@@ -72,11 +72,11 @@ class Status extends Controller
 
         switch ($body->status) {
             case 'waiting':
-                if ($order->canHold()) {
-                    $order->hold();
-                }
+//                 if ($order->canHold()) {
+//                     $order->hold();
+//                 }
                 $state = \Magento\Sales\Model\Order::STATE_PENDING_PAYMENT;
-                $order->setState($state)->setStatus($state);
+                $order->setState($state)->setStatus(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
                 break;
 
             case 'validate':
@@ -85,7 +85,7 @@ class Status extends Controller
                 }
 
                 $state = \Magento\Sales\Model\Order::STATE_PENDING_PAYMENT;
-                $order->setState($state)->setStatus($state);
+                $order->setState($state)->setStatus(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
                 break;
 
             case 'error':
