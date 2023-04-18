@@ -72,6 +72,7 @@ class Prepare extends Controller
 
         $order = $this->quoteManagement->submit($this->quote);
         $order->setState(Order::STATE_NEW);
+        $order->setStatus(Order::STATE_PENDING_PAYMENT);
 
 
         try {
