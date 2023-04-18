@@ -64,7 +64,8 @@ class Finish extends Controller
         $this->quote->collectTotals()->save();
 
         $order = $this->quoteManagement->submit($this->quote);
-        $order->setState(Order::STATE_PENDING_PAYMENT);
+        $order->setState(Order::STATE_NEW);
+        $order->setStatus(Order::STATE_PENDING_PAYMENT);
         $order->setEmailSent(1);
         if ($body->tax < 0) {
             $order->setDiscountTaxCompensationAmount($body->tax);
