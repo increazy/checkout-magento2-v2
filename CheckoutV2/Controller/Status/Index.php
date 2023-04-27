@@ -45,11 +45,6 @@ class Index extends \Magento\Framework\App\Action\Action
             if ($orderId->getId()) {
                 $order = $this->orderModel->load($orderId->getId());
                 switch ($data->status) {
-                    case 'waiting':
-                        if ($order->canHold()) {
-                            $order->hold();
-                        }
-                        break;
                     case 'validate':
                         if ($order->canUnhold()) {
                             $order->unhold();
