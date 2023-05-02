@@ -83,7 +83,46 @@ class Finish extends Controller
             $order->setGrandTotal($order->getGrandTotal() + $body->tax);
             $order->setBaseTotalDue($order->getBaseTotalDue() + $body->tax);
         }
+
+        try {
+            if ($body->payment_data->method == 'increazy-free') {
+                if ($order->canUnhold()) {
+                    $order->unhold();
+                }
+
+                if ($order->canInvoice()) {
+                    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                    $invoiceService = $objectManager->get('Magento\Sales\Model\Service\InvoiceService');
+
+                    $invoice = $invoiceService->prepareInvoice($order);
+                    $invoice->register();
+                    $invoice->save();
+
+                    $transaction = $objectManager->get('Magento\Framework\DB\Transaction');
+                    $transactionSave = $transaction->addObject($invoice)
+                        ->addObject($invoice->getOrder());
+                    $transactionSave->save();
+
+                    $invoiceSender = $objectManager->create('Magento\Sales\Model\Order\Email\Sender\InvoiceSender');
+
+                    $invoiceSender->send($invoice);
+
+                    $order
+                        ->addStatusHistoryComment('Pagamento confirmado')
+                    ->setIsCustomerNotified(true);
+
+                    $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
+                    $order->setState($state)->setStatus($state);
+                }
+            }
+            
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
+
         $order->save();
+
+        
 
         return [
             'increment_id' => $order->getRealOrderId(),

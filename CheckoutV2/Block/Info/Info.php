@@ -26,7 +26,6 @@ class Info extends \Magento\Payment\Block\Info
         }
 
         $method = $this->getMethodLabel($data['pay_method']);
-        $status = $this->getCheckouttatus($data['status']);
 
         $lines = '';
 
@@ -91,7 +90,6 @@ class Info extends \Magento\Payment\Block\Info
 
         return $this->generateHTML([
             'method'  => $method,
-            'status'  => $status,
             'lines'   => $lines,
             'gateway' => $data['id'],
         ]);
@@ -131,17 +129,5 @@ class Info extends \Magento\Payment\Block\Info
             return 'Pix';
 
         return 'Outro';
-    }
-
-    private function getCheckouttatus($status)
-    {
-        if ($status == 'canceled')
-            return "Cancelado";
-        else if ($status == 'pending')
-            return "Pendente";
-        else if ($status == 'success')
-            return "Pago";
-
-        return "Aguardando pagamento";
     }
 }
