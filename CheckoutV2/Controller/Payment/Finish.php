@@ -34,6 +34,7 @@ class Finish extends Controller
         ScopeConfigInterface $scopeConfig
     )
     {
+        
         $this->quoteManagement = $quoteManagement;
         $this->quote = $quote;
         $this->customer = $customer;
@@ -57,16 +58,22 @@ class Finish extends Controller
         $this->quote->setCustomerIsGuest(false);
         $this->quote->setPaymentMethod($body->payment_data->method);
         $this->quote->setInventoryProcessed(false);
+        $this->quote->setCanSendNewEmailFlag(false);
         $this->quote->save();
 
         $paymentData = json_decode(json_encode($body->payment_data), true);
         $this->quote->getPayment()->importData($paymentData);
         $this->quote->collectTotals()->save();
 
-        $order = $this->quoteManagement->submit($this->quote);
+        $order = $this->quoteManagement->submit($this->quote, [
+            "email_sent" => true,
+            "send_email" => true,
+            "customer_middlename" => 'teste',
+            "can_send_new_email_flag" => false
+        ]);
         $order->setState(Order::STATE_NEW);
         $order->setStatus(Order::STATE_PENDING_PAYMENT);
-        $order->setEmailSent(1);
+        
         if ($body->tax < 0) {
             $order->setDiscountTaxCompensationAmount($body->tax);
             $order->setBaseDiscountTaxCompensationAmount($body->tax);
@@ -120,12 +127,16 @@ class Finish extends Controller
             $this->error($e->getMessage());
         }
 
+        $oM = \Magento\Framework\App\ObjectManager::getInstance();
+        $oM->create('Magento\Sales\Model\Order\Email\Sender\OrderSender')->send($order, true);
+        $order->setEmailSent(1);
+
         $order->save();
 
-        
+        return $order->getData();
 
-        return [
-            'increment_id' => $order->getRealOrderId(),
-        ];
+        // return [
+        //     'increment_id-0' => $order->getRealOrderId(),
+        // ];
     }
 }

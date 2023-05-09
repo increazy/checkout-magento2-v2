@@ -104,8 +104,12 @@ class Prepare extends Controller
 
                     $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
                     $order->setState($state)->setStatus($state);
+                    $oM = \Magento\Framework\App\ObjectManager::getInstance();
+                    $oM->create('Magento\Sales\Model\Order\Email\Sender\OrderSender')->send($order, true);
+                    $order->setEmailSent(1);
                 }
             }
+            
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }

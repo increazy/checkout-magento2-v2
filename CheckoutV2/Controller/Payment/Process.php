@@ -39,12 +39,16 @@ class Process extends Controller
     public function action($body)
     {
         $this->order->loadByIncrementId($body->order_id);
+        $this->order->setEmailSent(0);
         $paymentData = json_decode(json_encode($body->payment_data), true);
         $this->order->getPayment()->setAdditionalInformation([
             'infos' => $paymentData
         ]);
 
+
         $this->orderSender->send($this->order);
+        $this->order->setEmailSent(1);
+
         $this->order->getPayment()->save();
         $this->order->save();
 
