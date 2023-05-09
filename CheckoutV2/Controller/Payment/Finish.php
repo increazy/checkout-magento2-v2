@@ -65,12 +65,7 @@ class Finish extends Controller
         $this->quote->getPayment()->importData($paymentData);
         $this->quote->collectTotals()->save();
 
-        $order = $this->quoteManagement->submit($this->quote, [
-            "email_sent" => true,
-            "send_email" => true,
-            "customer_middlename" => 'teste',
-            "can_send_new_email_flag" => false
-        ]);
+        $order = $this->quoteManagement->submit($this->quote);
         $order->setState(Order::STATE_NEW);
         $order->setStatus(Order::STATE_PENDING_PAYMENT);
         
