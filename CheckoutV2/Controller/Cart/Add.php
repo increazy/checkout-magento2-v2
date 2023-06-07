@@ -52,6 +52,10 @@ class Add extends Controller
             // 'custom_price' => $product->getFinalPrice()
         ]);
 
+        if(isset($body->request_info)) {
+        	$requestInfo = array_merge($requestInfo, json_decode(json_encode($body->request_info), true));
+        }
+
         if(isset($body->super_attribute)) {
         	$requestInfo['super_attribute'] = (array) $body->super_attribute;
         }
