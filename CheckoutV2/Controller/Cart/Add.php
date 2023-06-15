@@ -46,15 +46,10 @@ class Add extends Controller
         $product = $this->product->load($body->product_id);
 		$prodDt = $product->getData();
 
-        $requestInfo = new \Magento\Framework\DataObject([
-		    'product' => $body->product_id,
+        $requestInfo = new \Magento\Framework\DataObject(array_merge([
+	    'product' => $body->product_id,
             'qty' =>  $body->qty,
-            // 'custom_price' => $product->getFinalPrice()
-        ]);
-
-        if(isset($body->request_info)) {
-        	$requestInfo = array_merge($requestInfo, json_decode(json_encode($body->request_info), true));
-        }
+        ], json_decode(json_encode($body->request_info ?? []), true)));
 
         if(isset($body->super_attribute)) {
         	$requestInfo['super_attribute'] = (array) $body->super_attribute;
