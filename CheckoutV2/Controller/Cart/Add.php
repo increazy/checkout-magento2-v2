@@ -36,7 +36,7 @@ class Add extends Controller
 
     public function validate($body)
     {
-        return isset($body->product_id) && isset($body->quote_id) && isset($body->qty);
+        return isset($body->product_id) && isset($body->quote_id);
     }
 
     public function action($body)
@@ -48,14 +48,17 @@ class Add extends Controller
 
         $requestInfo = new \Magento\Framework\DataObject(array_merge([
 	    'product' => $body->product_id,
-            'qty' =>  $body->qty,
         ], json_decode(json_encode($body->request_info ?? []), true)));
+
+	if(isset($body->qty)) {
+            $requestInfo['qty'] = $body->qty;
+        }
 
         if(isset($body->super_attribute)) {
         	$requestInfo['super_attribute'] = (array) $body->super_attribute;
         }
 
-		if(isset($body->options)) {
+	if(isset($body->options)) {
             $requestInfo['options'] = (array) $body->options;
             $requestInfo->setOptions((array) $body->options);
         }
