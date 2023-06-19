@@ -52,6 +52,6 @@ class Process extends Controller
         $this->order->getPayment()->save();
         $this->order->save();
 
-        return $order->getData();
+        return $this->order->getData();
     }
 }
