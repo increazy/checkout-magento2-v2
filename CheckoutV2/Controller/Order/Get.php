@@ -77,7 +77,7 @@ class Get extends Controller
 
         return array_merge($this->order->getData(), [
             'items'          => $items,
-            'shipping'       => $this->order->getShippingAddress()->getData(),
+            'shipping'       => $this->order->getShippingAddress() ? $this->order->getShippingAddress()->getData() : $this->order->getBillingAddress()->getData(),
             'billing'        => $this->order->getBillingAddress()->getData(),
             'delivery_name'  => $this->order->getShippingDescription(),
             'delivery_price' => $this->order->getShippingAmount(),
