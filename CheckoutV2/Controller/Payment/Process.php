@@ -52,19 +52,6 @@ class Process extends Controller
         $this->order->getPayment()->save();
         $this->order->save();
 
-        return array_merge($this->order->getData(), [
-            'shipping'       => $this->order->getShippingAddress() ? $this->order->getShippingAddress()->getData() : $this->order->getBillingAddress()->getData(),
-            'billing'        => $this->order->getBillingAddress()->getData(),
-            'delivery_name'  => $this->order->getShippingDescription(),
-            'delivery_price' => $this->order->getShippingAmount(),
-            'discount'       => $this->order->getDiscountAmount(),
-            'total'          => $this->order->getGrandTotal(),
-            'tax'            => $this->order->getTaxAmount(),
-            'payment_method' => [
-                'additional_info' => $this->order->getPayment()->getAdditionalInformation(),
-                'additional_data' => $this->order->getPayment()->getAdditionalData(),
-                'method'          => $this->order->getPayment()->getMethod(),
-            ],
-        ]);
+        return $order->getData();
     }
 }
