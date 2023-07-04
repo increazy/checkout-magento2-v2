@@ -6,6 +6,8 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Framework\DB\Transaction;
 
 class Process extends Controller
 {
@@ -15,14 +17,26 @@ class Process extends Controller
     private $order;
 
     private $orderSender;
+    /**
+     * @var InvoiceSender
+     */
+    private $invoiceSender;
+    /**
+     * @var Transaction
+     */
+    private $transaction;
 
     public function __construct(
         Context $context,
         Order $order,
+        InvoiceSender $invoiceSender,
+        Transaction $transaction,
         StoreManagerInterface $store,
         ScopeConfigInterface $scopeConfig
     )
     {
+        $this->invoiceService = $invoiceService;
+        $this->transaction = $transaction;
         $this->order = $order;
         $om = \Magento\Framework\App\ObjectManager::getInstance();
         $this->orderSender = $om->create(\Magento\Sales\Model\Order\Email\Sender\OrderSender::class);
@@ -50,6 +64,45 @@ class Process extends Controller
         $this->order->setEmailSent(1);
 
         $this->order->getPayment()->save();
+
+        $status = $body->payment_data->status ?? '';
+        if ($status == 'success') {
+            if ($this->order->canUnhold()) {
+                $this->order->unhold();
+            }
+
+            if ($this->order->canInvoice()) {
+                $invoice = $this->invoiceService->prepareInvoice($this->order);
+                $invoice->register();
+                $invoice->save();
+
+                $transactionSave = $this->transaction->addObject($invoice)
+                    ->addObject($invoice->getOrder());
+                $transactionSave->save();
+
+                $this->invoiceSender->send($invoice);
+
+                $this->order
+                    ->addStatusHistoryComment('Pagamento confirmado')
+                ->setIsCustomerNotified(true);
+
+                $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
+                $this->order->setState($state)->setStatus($state);
+            }
+        }
+
+        if ($status == 'canceled') {
+            if ($this->order->canUnhold()) {
+                $this->order->unhold();
+            }
+
+            if ($this->order->canCancel()) {
+                $this->order->cancel();
+            }
+            $state = \Magento\Sales\Model\Order::STATE_CANCELED;
+            $this->order->setState($state)->setStatus($state);
+        }
+        
         $this->order->save();
 
         return $this->order->getData();
