@@ -9,8 +9,6 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Sales\Model\Service\InvoiceService;
-use Magento\Framework\DB\Transaction;
 
 class Finish extends Controller
 {
@@ -26,13 +24,8 @@ class Finish extends Controller
      * @var CustomerRepositoryInterface
      */
     private $customer;
-    /**
-     * @var InvoiceSender
-     */
+
     private $invoiceSender;
-    /**
-     * @var Transaction
-     */
     private $transaction;
 
     public function __construct(
@@ -40,14 +33,14 @@ class Finish extends Controller
         QuoteManagement $quoteManagement,
         CustomerRepositoryInterface $customer,
         Quote $quote,
-        InvoiceSender $invoiceSender,
-        Transaction $transaction,
         StoreManagerInterface $store,
         ScopeConfigInterface $scopeConfig
     )
     {
-        $this->invoiceService = $invoiceService;
-        $this->transaction = $transaction;
+        $om = \Magento\Framework\App\ObjectManager::getInstance();
+        $this->invoiceService = $om->create(\Magento\Sales\Model\Service\InvoiceService::class);
+        $this->transaction = $om->create(\Magento\Framework\DB\Transaction::class);
+        
         $this->quoteManagement = $quoteManagement;
         $this->quote = $quote;
         $this->customer = $customer;
