@@ -9,6 +9,10 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Framework\DB\Transaction;
+use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
+use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 
 class Finish extends Controller
 {
@@ -24,26 +28,45 @@ class Finish extends Controller
      * @var CustomerRepositoryInterface
      */
     private $customer;
-
+    /**
+     * @var InvoiceSender
+     */
     private $invoiceSender;
+    /**
+     * @var Transaction
+     */
     private $transaction;
+
+    /**
+     * @var InvoiceService
+     */
+    private $invoiceService;
+
+    /**
+     * @var OrderSender
+     */
+    private $orderSender;
 
     public function __construct(
         Context $context,
         QuoteManagement $quoteManagement,
         CustomerRepositoryInterface $customer,
         Quote $quote,
+        InvoiceSender $invoiceSender,
+        Transaction $transaction,
         StoreManagerInterface $store,
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        InvoiceService $invoiceService,
+        OrderSender $orderSender
     )
     {
-        $om = \Magento\Framework\App\ObjectManager::getInstance();
-        $this->invoiceService = $om->create(\Magento\Sales\Model\Service\InvoiceService::class);
-        $this->transaction = $om->create(\Magento\Framework\DB\Transaction::class);
-        
+        $this->invoiceService = $invoiceService;
+        $this->invoiceSender = $invoiceSender;
+        $this->transaction = $transaction;
         $this->quoteManagement = $quoteManagement;
         $this->quote = $quote;
         $this->customer = $customer;
+        $this->orderSender = $orderSender;
         parent::__construct($context, $store, $scopeConfig);
     }
 
@@ -99,21 +122,15 @@ class Finish extends Controller
                 }
 
                 if ($order->canInvoice()) {
-                    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-                    $invoiceService = $objectManager->get('Magento\Sales\Model\Service\InvoiceService');
-
-                    $invoice = $invoiceService->prepareInvoice($order);
+                    $invoice = $this->invoiceService->prepareInvoice($order);
                     $invoice->register();
                     $invoice->save();
 
-                    $transaction = $objectManager->get('Magento\Framework\DB\Transaction');
-                    $transactionSave = $transaction->addObject($invoice)
+                    $transactionSave = $this->transaction->addObject($invoice)
                         ->addObject($invoice->getOrder());
                     $transactionSave->save();
 
-                    $invoiceSender = $objectManager->create('Magento\Sales\Model\Order\Email\Sender\InvoiceSender');
-
-                    $invoiceSender->send($invoice);
+                    $this->invoiceSender->send($invoice);
 
                     $order
                         ->addStatusHistoryComment('Pagamento confirmado')
@@ -167,8 +184,7 @@ class Finish extends Controller
             $this->error($e->getMessage());
         }
 
-        $oM = \Magento\Framework\App\ObjectManager::getInstance();
-        $oM->create('Magento\Sales\Model\Order\Email\Sender\OrderSender')->send($order, true);
+        $this->orderSender->send($order, true);
         $order->setEmailSent(1);
 
         $order->save();
