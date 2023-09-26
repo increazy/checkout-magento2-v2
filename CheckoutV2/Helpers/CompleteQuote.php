@@ -97,7 +97,8 @@ abstract class CompleteQuote
 				if (count($qty) > 0) {
 					$stock['salable'] = $qty[0]['qty'] ?? $stock['qty'];
 				}
-			} catch(\Error $e) {}
+			} catch(\Exception $e) {
+			}  catch(\Error $e) {}
 		}
 
         return $stock;
