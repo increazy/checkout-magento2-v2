@@ -81,7 +81,6 @@ class Index extends \Magento\Framework\App\Action\Action
 
                             $this->invoiceSender->send($invoice);
                         }
-
                         $order->addStatusHistoryComment('Pagamento confirmado')
                             ->setIsCustomerNotified(true); 
 

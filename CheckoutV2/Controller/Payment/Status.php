@@ -125,7 +125,6 @@ class Status extends Controller
 
                     $this->invoiceSender->send($invoice);
                 }
-
                 $order
                     ->addStatusHistoryComment('Pagamento confirmado')
                 ->setIsCustomerNotified(true);

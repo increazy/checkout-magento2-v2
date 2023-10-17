@@ -133,14 +133,14 @@ class Finish extends Controller
                     $transactionSave->save();
 
                     $this->invoiceSender->send($invoice);
-
-                    $order
-                        ->addStatusHistoryComment('Pagamento confirmado')
-                    ->setIsCustomerNotified(true);
-
-                    $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                    $order->setState($state)->setStatus($state);
                 }
+
+                $order
+                    ->addStatusHistoryComment('Pagamento confirmado')
+                ->setIsCustomerNotified(true);
+
+                $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
+                $order->setState($state)->setStatus($state);
             }
 
             if ($body->payment_data->status == 'success') {
@@ -160,14 +160,14 @@ class Finish extends Controller
                     $transactionSave->save();
 
                     $this->invoiceSender->send($invoice);
-
-                    $order
-                        ->addStatusHistoryComment('Pagamento confirmado')
-                    ->setIsCustomerNotified(true);
-
-                    $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                    $order->setState($state)->setStatus($state);
                 }
+
+                $order
+                    ->addStatusHistoryComment('Pagamento confirmado')
+                ->setIsCustomerNotified(true);
+
+                $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
+                $order->setState($state)->setStatus($state);
             }
 
             if ($body->payment_data->status == 'canceled') {

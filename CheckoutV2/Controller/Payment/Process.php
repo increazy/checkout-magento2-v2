@@ -98,11 +98,11 @@ class Process extends Controller
                 $transactionSave->save();
 
                 $this->invoiceSender->send($invoice);
+            }
 
-                $this->order
+            $this->order
                     ->addStatusHistoryComment('Pagamento confirmado')
                 ->setIsCustomerNotified(true);
-            }
 
             $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
             $this->order->setState($state)->setStatus($state);
