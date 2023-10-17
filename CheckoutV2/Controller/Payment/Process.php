@@ -75,7 +75,10 @@ class Process extends Controller
 
 
         $this->orderSender->send($this->order);
-        $this->order->setEmailSent(1);
+
+        $this->order->addStatusHistoryComment('Pedido Processado pela Api ' .$this->order->getStatus())
+        ->setIsCustomerNotified(false);
+
 
         $this->order->getPayment()->save();
 
@@ -99,11 +102,12 @@ class Process extends Controller
                 $this->order
                     ->addStatusHistoryComment('Pagamento confirmado')
                 ->setIsCustomerNotified(true);
-
-                $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                $this->order->setState($state)->setStatus($state);
             }
+
+            $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
+            $this->order->setState($state)->setStatus($state);
         }
+
 
         if ($status == 'canceled') {
             if ($this->order->canUnhold()) {

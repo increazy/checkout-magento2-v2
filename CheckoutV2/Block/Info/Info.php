@@ -91,7 +91,7 @@ class Info extends \Magento\Payment\Block\Info
         return $this->generateHTML([
             'method'  => $method,
             'lines'   => $lines,
-            'gateway' => $data['id'],
+            'gateway' => $data['id'] ?? 'undefined',
         ]);
     }
 

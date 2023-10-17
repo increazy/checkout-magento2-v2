@@ -61,6 +61,8 @@ class Index extends \Magento\Framework\App\Action\Action
 
                         if ($order->canCancel()) {
                             $order->cancel();
+                            $order->addStatusHistoryComment('Pagamento cancelado pela Api')
+                                ->setIsCustomerNotified(false);
                         }
                         break;
                     case 'success':
@@ -78,13 +80,13 @@ class Index extends \Magento\Framework\App\Action\Action
                             $transactionSave->save();
 
                             $this->invoiceSender->send($invoice);
-
-                            $order->addStatusHistoryComment('Pagamento confirmado')
-                                ->setIsCustomerNotified(true);
-
-                            $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                            $order->setState($state)->setStatus($state);
                         }
+
+                        $order->addStatusHistoryComment('Pagamento confirmado')
+                            ->setIsCustomerNotified(true); 
+
+                        $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
+                        $order->setState($state)->setStatus($state);
                         break;
                 }
 

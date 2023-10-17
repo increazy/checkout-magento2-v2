@@ -4,20 +4,27 @@ namespace Increazy\CheckoutV2\Controller\Order;
 use Increazy\CheckoutV2\Controller\Controller;
 use Increazy\CheckoutV2\Helpers\CompleteQuote;
 use Magento\Catalog\Model\Category;
-use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ProductFactory;
+use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\Catalog\Model\Product\Gallery\ReadHandler;
 use Magento\Customer\Model\Backend\Customer;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\StoreManagerInterface;
 
 class Get extends Controller
 {
     /**
-     * @var Product
+     * @var ProductFactory
      */
-    private $product;
+    private $productFactory;
+
+    /**
+     * @var ProductResource
+     */
+    private $productResource;
     /**
      * @var Order
      */
@@ -33,7 +40,8 @@ class Get extends Controller
 
     public function __construct(
         Context $context,
-        Product $product,
+        ProductFactory $productFactory,
+        ProductResource $productResource,
         Category $category,
         ReadHandler $handler,
         Order $order,
@@ -43,7 +51,8 @@ class Get extends Controller
     {
         $this->order = $order;
         $this->category = $category;
-        $this->product = $product;
+        $this->productFactory = $productFactory;
+        $this->productResource = $productResource;
         $this->handler = $handler;
         parent::__construct($context, $store, $scopeConfig);
     }
@@ -56,9 +65,9 @@ class Get extends Controller
     public function action($body)
     {
         $this->order->loadByIncrementId($body->order_id);
-
         $items = array_map(function ($item) {
-            $product = $this->product->load($item->getProductId());
+            $product = $this->productFactory->create();
+            $this->productResource->load($product, $item->getProductId());
             $productData = $product->getData();
 
             return array_merge($productData, $item->getData(), [

@@ -77,6 +77,8 @@ class Status extends Controller
 //                 }
                 $state = \Magento\Sales\Model\Order::STATE_PENDING_PAYMENT;
                 $order->setState($state)->setStatus(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
+                $order->addStatusHistoryComment('Status atualizado pela Api status: ' . $order->getStatus() )
+                ->setIsCustomerNotified(false);
                 break;
 
             case 'validate':
@@ -86,6 +88,8 @@ class Status extends Controller
 
                 $state = \Magento\Sales\Model\Order::STATE_PENDING_PAYMENT;
                 $order->setState($state)->setStatus(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
+                $order->addStatusHistoryComment('Status atualizado pela Api status: ' . $order->getStatus() )
+                ->setIsCustomerNotified(false);
                 break;
 
             case 'error':
@@ -99,6 +103,10 @@ class Status extends Controller
                 }
                 $state = \Magento\Sales\Model\Order::STATE_CANCELED;
                 $order->setState($state)->setStatus($state);
+                
+                $order->addStatusHistoryComment('Pedido cancelado pela Api')
+                 ->setIsCustomerNotified(false);
+
                 break;
 
             case 'success':
@@ -116,14 +124,14 @@ class Status extends Controller
                     $transactionSave->save();
 
                     $this->invoiceSender->send($invoice);
-
-                    $order
-                        ->addStatusHistoryComment('Pagamento confirmado')
-                    ->setIsCustomerNotified(true);
-
-                    $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                    $order->setState($state)->setStatus($state);
                 }
+
+                $order
+                    ->addStatusHistoryComment('Pagamento confirmado')
+                ->setIsCustomerNotified(true);
+
+                $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
+                $order->setState($state)->setStatus($state);
                 break;
         }
 

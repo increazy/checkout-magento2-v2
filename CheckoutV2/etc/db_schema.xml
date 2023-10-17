@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="quote">
+        <column xsi:type="decimal" name="increazy_juros" scale="4" precision="20" unsigned="false" nullable="true"
+                default="0" comment="Increazy Juros"/>
+        <column xsi:type="decimal" name="base_increazy_juros" scale="4" precision="20" unsigned="false" nullable="true"
+                default="0" comment="Base Increazy Juros"/>
+    </table>
+
+    <table name="sales_order">
+        <column xsi:type="decimal" name="increazy_juros" scale="4" precision="20" unsigned="false" nullable="true"
+                default="0" comment="Increazy Juros"/>
+        <column xsi:type="decimal" name="base_increazy_juros" scale="4" precision="20" unsigned="false" nullable="true"
+                default="0" comment="Base Increazy Juros"/>
+    </table>
+
+    <table name="sales_invoice" resource="default">
+        <column xsi:type="decimal" name="increazy_juros" scale="4" precision="20" unsigned="false" nullable="true"
+                default="0" comment="Increazy Juros"/>
+        <column xsi:type="decimal" name="base_increazy_juros" scale="4" precision="20" unsigned="false" nullable="true"
+                default="0" comment="Base Increazy Juros"/>
+    </table>
+    <table name="sales_creditmemo" resource="default">
+        <column xsi:type="decimal" name="increazy_juros" scale="4" precision="20" unsigned="false" nullable="true"
+                default="0" comment="Increazy Juros"/>
+        <column xsi:type="decimal" name="base_increazy_juros" scale="4" precision="20" unsigned="false" nullable="true"
+                default="0" comment="Base Increazy Juros"/>
+    </table>
+</schema>

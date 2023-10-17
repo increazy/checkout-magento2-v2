@@ -9,6 +9,7 @@
 
     <event name="sales_model_service_quote_submit_before">
         <observer name="disabled_iemail" instance="Increazy\CheckoutV2\Observer\DisableEmail" />
+        <observer name="increazy_checkoutv2_sales_model_service_quote_submit_before" instance="Increazy\CheckoutV2\Observer\SaveOrderBeforeSalesModelQuoteObserver" />
     </event>
 
     

@@ -63,13 +63,17 @@ class Prepare extends Controller
         $this->quote->assignCustomer($customer);
         $this->quote->setPaymentMethod($body->payment_method);
         $this->quote->setInventoryProcessed(false);
+        
+        $this->quote->setData('base_increazy_juros', $body->tax);
+        $this->quote->setData('increazy_juros', $body->tax);
         $this->quote->save();
 
         $this->quote->getPayment()->importData([
             'method' => $body->payment_method
         ]);
-        $this->quote->collectTotals()->save();
 
+        $this->quote->save();
+        
         $order = $this->quoteManagement->submit($this->quote);
         $order->setState(Order::STATE_NEW);
         $order->setStatus(Order::STATE_PENDING_PAYMENT);
@@ -86,6 +90,8 @@ class Prepare extends Controller
                     $invoiceService = $objectManager->get('Magento\Sales\Model\Service\InvoiceService');
 
                     $invoice = $invoiceService->prepareInvoice($order);
+                    $invoice->setBaseGrandTotal($order->getBaseGrandTotal());
+                    $invoice->setGrandTotal($order->getGrandTotal());
                     $invoice->register();
                     $invoice->save();
 
@@ -105,8 +111,7 @@ class Prepare extends Controller
                     $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
                     $order->setState($state)->setStatus($state);
                     $oM = \Magento\Framework\App\ObjectManager::getInstance();
-                    $oM->create('Magento\Sales\Model\Order\Email\Sender\OrderSender')->send($order, true);
-                    $order->setEmailSent(1);
+                    $oM->create('Magento\Sales\Model\Order\Email\Sender\OrderSender')->send($order);
                 }
             }
             
@@ -115,19 +120,22 @@ class Prepare extends Controller
         }
 
         if ($body->tax < 0) {
-            $order->setDiscountTaxCompensationAmount($body->tax);
-            $order->setBaseDiscountTaxCompensationAmount($body->tax);
-
             $order->setBaseGrandTotal($order->getBaseGrandTotal() + $body->tax);
             $order->setTotalDue($order->getTotalDue() + $body->tax);
             $order->setGrandTotal($order->getGrandTotal() + $body->tax);
             $order->setBaseTotalDue($order->getBaseTotalDue() + $body->tax);
         } else if ($body->tax > 0) {
-            $order->setBaseGrandTotal($order->getBaseGrandTotal() + $body->tax);
-            $order->setTotalDue($order->getTotalDue() + $body->tax);
-            $order->setGrandTotal($order->getGrandTotal() + $body->tax);
-            $order->setBaseTotalDue($order->getBaseTotalDue() + $body->tax);
+            // $order->setTaxAmount($order->getTaxAmount() + $body->tax);
+            
+            $order->setBaseGrandTotal($order->getBaseGrandTotal());
+            // $order->setTotalDue($order->getTotalDue() + $body->tax);
+            $order->setGrandTotal($order->getGrandTotal());
+            // $order->setBaseTotalDue($order->getBaseTotalDue() + $body->tax);
         }
+
+        
+        $order->addStatusHistoryComment('Pedido Criado pela Api status: ' .$order->getStatus())
+        ->setIsCustomerNotified(false);
 
         $order->save();
         return [

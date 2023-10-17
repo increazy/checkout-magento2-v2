@@ -107,10 +107,12 @@ class Finish extends Controller
             $order->setGrandTotal($order->getGrandTotal() + $body->tax);
             $order->setBaseTotalDue($order->getBaseTotalDue() + $body->tax);
         } else if ($body->tax > 0) {
+            // $order->setTaxAmount($order->getTaxAmount() + $body->tax);
+            
             $order->setBaseGrandTotal($order->getBaseGrandTotal() + $body->tax);
-            $order->setTotalDue($order->getTotalDue() + $body->tax);
+            // $order->setTotalDue($order->getTotalDue() + $body->tax);
             $order->setGrandTotal($order->getGrandTotal() + $body->tax);
-            $order->setBaseTotalDue($order->getBaseTotalDue() + $body->tax);
+            // $order->setBaseTotalDue($order->getBaseTotalDue() + $body->tax);
         }
 
         try {
@@ -121,6 +123,8 @@ class Finish extends Controller
 
                 if ($order->canInvoice()) {
                     $invoice = $this->invoiceService->prepareInvoice($order);
+                    $invoice->setBaseGrandTotal($order->getBaseGrandTotal());
+                    $invoice->setGrandTotal($order->getGrandTotal());
                     $invoice->register();
                     $invoice->save();
 
@@ -146,6 +150,8 @@ class Finish extends Controller
 
                 if ($order->canInvoice()) {
                     $invoice = $this->invoiceService->prepareInvoice($order);
+                    $invoice->setBaseGrandTotal($order->getBaseGrandTotal());
+                    $invoice->setGrandTotal($order->getGrandTotal());
                     $invoice->register();
                     $invoice->save();
 
@@ -182,8 +188,10 @@ class Finish extends Controller
             $this->error($e->getMessage());
         }
 
-        $this->orderSender->send($order, true);
-        $order->setEmailSent(1);
+        $this->orderSender->send($order);
+
+        $order->addStatusHistoryComment('Pedido atualizado pela Api '.$order->getStatus() )
+           ->setIsCustomerNotified(false);
 
         $order->save();
 

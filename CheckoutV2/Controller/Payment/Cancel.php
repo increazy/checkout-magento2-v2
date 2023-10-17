@@ -81,6 +81,9 @@ class Cancel extends Controller
                 // $this->registry->unregister('isSecureArea');
             }
             
+                 
+            $this->order->addStatusHistoryComment('Pedido cancelado pela Api')
+            ->setIsCustomerNotified(false);
             $this->order->cancel()->save();
         }
 
