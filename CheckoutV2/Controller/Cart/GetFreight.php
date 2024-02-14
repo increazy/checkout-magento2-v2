@@ -49,8 +49,12 @@ class GetFreight extends Controller
         foreach ($rates as $code => $_rates){
             foreach ($_rates as $_rate){
                 $result[] = [
-                    'method' => $_rate->getMethodTitle(),
-                    'value' => $_rate->getPrice()
+                    'method' => $_rate->getMethodTitle() ?? null,
+                    'value' => $_rate->getPrice() ?? null,
+                    'code'    => $_rate->getCode() ?? null,
+                    'carrier' => $_rate->getCarrierTitle() ?? null,
+                    'error'   => $_rate->getErrorMessage() ?? null,
+                    'order'   => $_rate->getRateId() ?? null
                 ];
             }
         }
