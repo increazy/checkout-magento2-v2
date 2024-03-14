@@ -101,7 +101,7 @@ class Process extends Controller
             }
 
             $this->order
-                    ->addStatusHistoryComment('Pagamento confirmado')
+                    ->addStatusHistoryComment('Pagamento injetado')
                 ->setIsCustomerNotified(true);
 
             $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
