@@ -83,7 +83,7 @@ class Cancel extends Controller
             
                  
             $this->order->addStatusHistoryComment('Pedido cancelado pela Api')
-            ->setIsCustomerNotified(false);
+            ->setIsCustomerNotified(true);
             $this->order->cancel()->save();
         }
 
