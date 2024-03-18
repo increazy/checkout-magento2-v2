@@ -62,7 +62,7 @@ class Index extends \Magento\Framework\App\Action\Action
                         if ($order->canCancel()) {
                             $order->cancel();
                             $order->addStatusHistoryComment('Pagamento cancelado pela Api')
-                                ->setIsCustomerNotified(false);
+                                ->setIsCustomerNotified(true);
                         }
                         break;
                     case 'success':
