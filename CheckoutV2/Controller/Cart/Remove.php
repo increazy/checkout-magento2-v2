@@ -44,6 +44,7 @@ class Remove extends Controller
         $this->quote->setStore($this->store->getStore());
         $this->quote->removeItem($body->item_id);
 
+        $this->quote->load($body->quote_id);
         $this->quote->collectTotals()->save();
 
         return CompleteQuote::get($this->quote);
