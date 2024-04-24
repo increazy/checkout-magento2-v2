@@ -36,6 +36,8 @@ class SetMethod extends Controller
         $this->quote->load($body->quote_id);
 
         $this->quote->getPayment()->importData(['method' => 'increazy-'.$body->method]);
+
+        $this->quote->load($body->quote_id);
         $this->quote->collectTotals()->save();
 
         return CompleteQuote::get($this->quote);
