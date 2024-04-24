@@ -66,6 +66,7 @@ class Add extends Controller
         $this->quote->addProduct($product, $requestInfo);
         $this->quote->setStoreId($body->store);
 
+	$this->quote->load($body->quote_id);
         $this->quote->collectTotals()->save();
 
         return CompleteQuote::get($this->quote);
