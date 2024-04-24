@@ -40,6 +40,9 @@ class GetFreight extends Controller
         $this->quote->getShippingAddress()->setCountryId($body->country_id);
         $this->quote->getShippingAddress()->setPostcode($body->postcode);
         $this->quote->getShippingAddress()->setCollectShippingRates(true);
+
+
+        $this->quote->load($body->quote_id);
         $this->quote->collectTotals();
         $this->quote->save();
 
