@@ -56,6 +56,8 @@ class SetDelivery extends Controller
         ->save();
 
         $this->quote->getShippingAddress()->setShippingMethod($body->shipping_method);
+
+        $this->quote->load($body->quote_id);
         $this->quote->collectTotals()->save();
 
         return CompleteQuote::get($this->quote);
