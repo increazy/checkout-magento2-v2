@@ -39,6 +39,7 @@ class Change extends Controller
         $item = $this->quote->getItemById($body->item_id);
         $item->setQty((double)$body->quantity)->save();
 
+        $this->quote->load($body->quote_id);
         $this->quote->collectTotals()->save();
 
         return CompleteQuote::get($this->quote);
