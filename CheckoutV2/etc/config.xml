@@ -46,6 +46,15 @@
                 <group>increazy</group>
             </increazy-creditcard>
 
+            <increazy-voucher>
+                <active>1</active>
+                <model>Increazy\CheckoutV2\Model\Voucher</model>
+                <order_status>pending</order_status>
+                <title>Cartão de Voucher</title>
+                <allowspecific>0</allowspecific>
+                <group>increazy</group>
+            </increazy-voucher>
+
             <increazy-onetap>
                 <active>1</active>
                 <model>Increazy\CheckoutV2\Model\Onetap</model>
@@ -90,6 +99,15 @@
                 <allowspecific>0</allowspecific>
                 <group>increazy</group>
             </increazy-pix>
+
+            <increazy-pix-installment>
+                <active>1</active>
+                <model>Increazy\CheckoutV2\Model\Pixinstallment</model>
+                <order_status>pending</order_status>
+                <title>Pix Parcelado</title>
+                <allowspecific>0</allowspecific>
+                <group>increazy</group>
+            </increazy-pix-installment>
 
             <increazy-ted>
                 <active>1</active>
