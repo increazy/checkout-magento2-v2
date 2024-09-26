@@ -81,11 +81,14 @@ class Index extends \Magento\Framework\App\Action\Action
 
                             $this->invoiceSender->send($invoice);
                         }
+			$state = \Magento\Sales\Model\Order::STATE_PROCESSING;
+                        $order->setState($state)->setStatus($state);
+			$order->save();
+			
                         $order->addStatusHistoryComment('Pagamento confirmado')
                             ->setIsCustomerNotified(true); 
 
-                        $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                        $order->setState($state)->setStatus($state);
+                        
                         break;
                 }
 
