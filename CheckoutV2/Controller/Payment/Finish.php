@@ -162,12 +162,15 @@ class Finish extends Controller
                     $this->invoiceSender->send($invoice);
                 }
 
+                $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
+                $order->setState($state)->setStatus($state);
+                $order->save();
+
                 $order
                     ->addStatusHistoryComment('Pagamento confirmado')
                 ->setIsCustomerNotified(true);
 
-                $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                $order->setState($state)->setStatus($state);
+                
             }
 
             if ($body->payment_data->status == 'canceled') {
