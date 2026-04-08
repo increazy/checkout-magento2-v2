@@ -30,6 +30,12 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Marque como "Sim" se você estiver usando nosso ambiente de homologação</comment>
                 </field>
+
+                <field id="freterapido" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ativar compatibilidade com Frete Rápido</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Ative caso utilize o módulo Frete Rápido. Ajusta o fluxo de checkout para compatibilidade com o carrier FreteRapido.</comment>
+                </field>
             </group>
         </section>
 

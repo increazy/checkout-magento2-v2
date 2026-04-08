@@ -4,6 +4,12 @@
     xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd"
 >
     <default>
+        <increazy_general>
+            <general>
+                <freterapido>0</freterapido>
+            </general>
+        </increazy_general>
+
         <increazy_checkoutv2>
             <button>
                 <class>button btn primary action</class>

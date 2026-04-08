@@ -12,6 +12,8 @@
                 default="0" comment="Increazy Juros"/>
         <column xsi:type="decimal" name="base_increazy_juros" scale="4" precision="20" unsigned="false" nullable="true"
                 default="0" comment="Base Increazy Juros"/>
+        <column xsi:type="varchar" name="shipping_method_increazy" nullable="true" length="150" comment="Shipping Method"/>
+        <column xsi:type="varchar" name="shipping_method_option_increazy" nullable="true" length="150" comment="Shipping Method Option"/>
     </table>
 
     <table name="sales_order">

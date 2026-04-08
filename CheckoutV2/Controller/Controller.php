@@ -82,6 +82,11 @@ abstract class Controller extends Action
         return $this->scopeConfig->getValue('increazy_general/general/hash', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
+    protected function isFreteRapidoEnabled()
+    {
+        return (bool) $this->scopeConfig->getValue('increazy_general/general/freterapido', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+
     public function hashEncode($str)
     {
         if ($str == '') return '';

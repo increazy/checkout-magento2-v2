@@ -6,18 +6,28 @@ use Magento\Quote\Model\Quote;
 
 abstract class CompleteQuote
 {
-    public static function get(Quote $quote)
+    public static function get(Quote $quote, $freteRapido = false)
     {
 		$shippingAddress = $quote->getShippingAddress();
 		$shippingAddress->setCollectShippingRates(true)->collectShippingRates();
-		$quote->collectTotals();
-		$quote->save();
+
+        if ($freteRapido) {
+            $quote->setTotalsCollectedFlag(true)->collectTotals();
+            $quote->collectTotals();
+            $quote->save();
+
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $quote = $objectManager->get('Magento\Quote\Model\Quote')->load($quote->getId());
+        } else {
+            $quote->collectTotals();
+            $quote->save();
+        }
 
         $data = $quote->getData();
 
         return array_merge($data, [
             'totals'   => self::getTotals($quote),
-            'shipping' => self::getShipping($quote),
+            'shipping' => self::getShipping($quote, $freteRapido),
             'items'    => self::getItems($quote),
         ]);
     }
@@ -39,13 +49,34 @@ abstract class CompleteQuote
 		];
 	}
 
-    private static function getShipping(Quote $quote) {
+    private static function getShipping(Quote $quote, $freteRapido = false)
+    {
 		$address = $quote->getShippingAddress();
-		$tax = $quote->getShippingAddress()->getBaseTaxAmount();
+		$shippingMethod = $address->getShippingMethod();
+		$shippingDescription = $address->getShippingDescription();
+
+        if ($freteRapido) {
+            $tax = $quote->getShippingAddress()->getShippingAmount();
+
+            if ($quote->getShippingMethodIncreazy() == 'freterapido') {
+                $rates = $quote->getShippingAddress()->getShippingRatesCollection();
+                foreach ($rates as $rate) {
+                    if ($rate->getCarrier() == 'freterapido') {
+                        if (strpos($rate->getMethod(), '_' . $quote->getShippingMethodOptionIncreazy())) {
+                            $shippingMethod = $rate->getCode();
+                            $shippingDescription = $rate->getCarrierTitle() . ' - ' . $rate->getMethodTitle();
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            $tax = $quote->getShippingAddress()->getBaseTaxAmount();
+        }
 
 		return [
-			'method'	  => $address->getShippingMethod(),
-			'description' => $address->getShippingDescription(),
+			'method'	  => $shippingMethod,
+			'description' => $shippingDescription,
 			'tax' 		  => $tax,
 		];
 	}
