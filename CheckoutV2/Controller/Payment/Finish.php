@@ -88,13 +88,17 @@ class Finish extends Controller
         $this->quote->setPaymentMethod($body->payment_data->method);
         $this->quote->setInventoryProcessed(false);
         $this->quote->setCanSendNewEmailFlag(false);
-        $this->quote->save();
 
         $paymentData = json_decode(json_encode($body->payment_data), true);
         $this->quote->getPayment()->importData($paymentData);
         $this->quote->collectTotals()->save();
 
         $order = $this->quoteManagement->submit($this->quote);
+
+        if ($order === null) {
+            $this->error('order.creation-failed');
+        }
+
         $order->setState(Order::STATE_NEW);
         $order->setStatus(Order::STATE_PENDING_PAYMENT);
         
@@ -164,7 +168,6 @@ class Finish extends Controller
 
                 $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
                 $order->setState($state)->setStatus($state);
-                $order->save();
 
                 $order
                     ->addStatusHistoryComment('Pagamento confirmado')
@@ -185,8 +188,6 @@ class Finish extends Controller
                 $order->setState($state)->setStatus($state);
             }
 
-            $order->save();
-            
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }

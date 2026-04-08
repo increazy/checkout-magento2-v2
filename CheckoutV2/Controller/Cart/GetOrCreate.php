@@ -62,10 +62,16 @@ class GetOrCreate extends Controller
                 $customer = $this->customer->getById($customerId);
                 $quote->assignCustomer($customer);
 
-                $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-                $customer = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
-                $customerSession = $objectManager->create('Magento\Customer\Model\Session');
-                $customerSession->setCustomerAsLoggedIn($customer);
+                try {
+                    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                    $customer = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
+                    $customerSession = $objectManager->create('Magento\Customer\Model\Session');
+                    $customerSession->setCustomerAsLoggedIn($customer);
+                } catch (\Exception $e) {
+                    // Race condition: o LoadCustomerQuoteObserver pode falhar se o quote
+                    // foi convertido em order por outro request concorrente.
+                    // O assignCustomer() acima ja associou o customer ao quote.
+                }
             }
         }
 

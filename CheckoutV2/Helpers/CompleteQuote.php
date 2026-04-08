@@ -10,12 +10,9 @@ abstract class CompleteQuote
     {
 		$shippingAddress = $quote->getShippingAddress();
 		$shippingAddress->setCollectShippingRates(true)->collectShippingRates();
-		$quote->setTotalsCollectedFlag(true)->collectTotals();
 		$quote->collectTotals();
 		$quote->save();
 
-		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-		$quote = $objectManager->get('Magento\Quote\Model\Quote')->load($quote->getId());
         $data = $quote->getData();
 
         return array_merge($data, [

@@ -35,9 +35,12 @@ class SetMethod extends Controller
     {
         $this->quote->load($body->quote_id);
 
+        if (!$this->quote->getId() || !$this->quote->getIsActive()) {
+            $this->error('quote.invalid-or-already-converted');
+        }
+
         $this->quote->getPayment()->importData(['method' => 'increazy-'.$body->method]);
 
-        $this->quote->load($body->quote_id);
         $this->quote->collectTotals()->save();
 
         return CompleteQuote::get($this->quote);

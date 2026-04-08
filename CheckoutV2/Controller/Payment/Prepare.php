@@ -52,29 +52,33 @@ class Prepare extends Controller
 
     public function action($body)
     {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
-
         $customerId = $this->hashDecode($body->token);
         $customer = $this->customer->getById($customerId);
         $this->quote->load($body->quote_id);
 
+        if (!$this->quote->getId() || !$this->quote->getIsActive()) {
+            $this->error('quote.invalid-or-already-converted');
+        }
+
         $this->quote->assignCustomer($customer);
         $this->quote->setPaymentMethod($body->payment_method);
         $this->quote->setInventoryProcessed(false);
-        
+
         $this->quote->setData('base_increazy_juros', $body->tax);
         $this->quote->setData('increazy_juros', $body->tax);
-        $this->quote->save();
 
         $this->quote->getPayment()->importData([
             'method' => $body->payment_method
         ]);
 
         $this->quote->save();
-        
+
         $order = $this->quoteManagement->submit($this->quote);
+
+        if ($order === null) {
+            $this->error('order.creation-failed');
+        }
+
         $order->setState(Order::STATE_NEW);
         $order->setStatus(Order::STATE_PENDING_PAYMENT);
 

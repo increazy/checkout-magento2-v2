@@ -48,11 +48,6 @@ class GetFreight extends Controller
     {
         $this->address->load($body->address_id);
 
-        $this->address->setIsDefaultBilling('1')
-            ->setIsDefaultShipping('1');
-        // ->setSaveInAddressBook('1');
-        $this->address->save();
-
         $this->quoteAddress->setData($this->address->getData());
 
         $this->quote->load($body->quote_id)

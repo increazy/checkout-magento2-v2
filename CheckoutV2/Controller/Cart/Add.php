@@ -44,7 +44,6 @@ class Add extends Controller
         $this->quote->load($body->quote_id);
         $this->quote->setStore($this->store->getStore());
         $product = $this->product->load($body->product_id);
-		$prodDt = $product->getData();
 
         $requestInfo = new \Magento\Framework\DataObject(array_merge([
 	    'product' => $body->product_id,
@@ -66,7 +65,6 @@ class Add extends Controller
         $this->quote->addProduct($product, $requestInfo);
         $this->quote->setStoreId($body->store);
 
-	$this->quote->load($body->quote_id);
         $this->quote->collectTotals()->save();
 
         return CompleteQuote::get($this->quote);
