@@ -90,7 +90,7 @@ abstract class Controller extends Action
     public function hashEncode($str)
     {
         if ($str == '') return '';
-        $token = base64_decode($this->getHash());
+        $token = base64_decode($this->getHash() ?? '');
         $parts = explode(':', $token);
         $key = substr(hash('sha256', $parts[0]), 0, 32);
         $iv = substr(hash('sha256', $parts[1]), 0, 16);

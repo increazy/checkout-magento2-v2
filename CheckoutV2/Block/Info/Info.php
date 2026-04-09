@@ -77,6 +77,9 @@ class Info extends \Magento\Payment\Block\Info
             }
 
             foreach ($data['custom_inputs'] as $key => $value) {
+                if (empty($value)) {
+                    continue;
+                }
 
                 if (substr($value, 0, 4) === "http") {
                     $lines .= $this->createLine($key, "<a href='$value' target='_blank'>Ver</a>");
