@@ -118,15 +118,59 @@ abstract class CompleteQuote
 
 		if (class_exists('\Magento\InventorySalesAdminUi\Model\GetSalableQuantityDataBySku')) {
 			try {
-				$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-				$StockState = $objectManager->get('\Magento\InventorySalesAdminUi\Model\GetSalableQuantityDataBySku');
-				$qty = $StockState->execute($entity->getSku());
+				// Resolve the stock_id linked to the current website
+				$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+				$websiteCode = $storeManager->getWebsite()->getCode();
+				$stockResolver = $objectManager->get('Magento\InventorySalesApi\Api\StockResolverInterface');
+				$stockId = $stockResolver->execute('website', $websiteCode)->getStockId();
 
-				if (count($qty) > 0) {
-					$stock['salable'] = $qty[0]['qty'] ?? $stock['qty'];
+				$stock['stock_id'] = $stockId;
+
+				// Get salable qty for this stock
+				$StockState = $objectManager->get('\Magento\InventorySalesAdminUi\Model\GetSalableQuantityDataBySku');
+				$salableData = $StockState->execute($entity->getSku());
+				$salable = 0;
+				foreach ($salableData as $stockData) {
+					if (isset($stockData['stock_id']) && (int)$stockData['stock_id'] === (int)$stockId) {
+						$salable = $stockData['qty'];
+						break;
+					}
 				}
-			} catch(\Exception $e) {
-			}  catch(\Error $e) {}
+
+				$stock['salable'] = $salable;
+				$stock['is_in_stock'] = ($salable > 0) ? '1' : '0';
+
+				// Get sources linked to this stock
+				$sourcesAssigned = $objectManager->get('Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface');
+				$sources = $sourcesAssigned->execute($stockId);
+
+				$validSourceCodes = [];
+				foreach ($sources as $source) {
+					if ($source->isEnabled()) {
+						$validSourceCodes[] = $source->getSourceCode();
+					}
+				}
+
+				// Get source items for this SKU
+				$sourceItemsBySku = $objectManager->get('Magento\InventoryApi\Api\GetSourceItemsBySkuInterface');
+				$sourceItems = $sourceItemsBySku->execute($entity->getSku());
+
+				$sourceQtys = [];
+				foreach ($sourceItems as $sourceItem) {
+					$sourceCode = $sourceItem->getSourceCode();
+					if (in_array($sourceCode, $validSourceCodes)) {
+						$sourceQtys[] = [
+							'source_code' => $sourceCode,
+							'qty' => (float)$sourceItem->getQuantity(),
+							'status' => (int)$sourceItem->getStatus(),
+						];
+					}
+				}
+
+				$stock['qty'] = $salable;
+				$stock['sources'] = $sourceQtys;
+			} catch (\Exception $e) {
+			} catch (\Error $e) {}
 		}
 
         return $stock;
