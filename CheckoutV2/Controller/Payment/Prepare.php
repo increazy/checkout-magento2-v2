@@ -60,7 +60,18 @@ class Prepare extends Controller
             $this->error('quote.invalid-or-already-converted');
         }
 
-        $this->quote->assignCustomer($customer);
+        // assignCustomer() chama assignCustomerWithAddressChange() que sobrescreve
+        // o shipping address com o endereco padrao do cliente. Para In-Store Pickup,
+        // o shipping address ja contem o endereco da loja (definido via shipping-information)
+        // e precisa ser preservado.
+        $shippingAddress = $this->quote->getShippingAddress();
+
+        if ($shippingAddress->getShippingMethod() === 'instore_pickup') {
+            $this->quote->assignCustomerWithAddressChange($customer, null, $shippingAddress);
+        } else {
+            $this->quote->assignCustomer($customer);
+        }
+
         $this->quote->setPaymentMethod($body->payment_method);
         $this->quote->setInventoryProcessed(false);
 

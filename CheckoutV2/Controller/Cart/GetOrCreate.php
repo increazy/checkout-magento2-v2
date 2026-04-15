@@ -96,7 +96,14 @@ class GetOrCreate extends Controller
             $customerId = $this->hashDecode($body->token);
             if ($customerId) {
                 $customer = $this->customer->getById($customerId);
-                $quote->assignCustomer($customer);
+                // Preserva o shipping address da pickup location.
+                // assignCustomer sobrescreve com o endereco padrao do cliente.
+                $shippingAddress = $quote->getShippingAddress();
+                if ($shippingAddress->getShippingMethod() === 'instore_pickup') {
+                    $quote->assignCustomerWithAddressChange($customer, null, $shippingAddress);
+                } else {
+                    $quote->assignCustomer($customer);
+                }
 
                 try {
                     $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
