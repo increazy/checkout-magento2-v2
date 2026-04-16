@@ -8,6 +8,9 @@
             <general>
                 <freterapido>0</freterapido>
             </general>
+            <frontend_redirect>
+                <active>0</active>
+            </frontend_redirect>
         </increazy_general>
 
         <increazy_checkoutv2>

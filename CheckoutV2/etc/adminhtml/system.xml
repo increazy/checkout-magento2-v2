@@ -37,6 +37,23 @@
                     <comment>Ative caso utilize o módulo Frete Rápido. Ajusta o fluxo de checkout para compatibilidade com o carrier FreteRapido.</comment>
                 </field>
             </group>
+
+            <group id="frontend_redirect" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Redirecionamento do front</label>
+                <field id="active" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Redirecionar o front da loja</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Quando ativado, qualquer acesso ao front da loja é redirecionado para a URL configurada abaixo. O painel admin, APIs REST e GraphQL não são afetados.</comment>
+                </field>
+
+                <field id="url" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>URL de redirecionamento</label>
+                    <comment>URL completa para onde o front será redirecionado (ex: https://minhaloja.com.br). Usada apenas quando a opção acima estiver ativa.</comment>
+                    <depends>
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+            </group>
         </section>
 
         <section id="increazy_checkoutv2" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
