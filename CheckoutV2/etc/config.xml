@@ -12,6 +12,7 @@
 
         <increazy_checkoutv2>
             <button>
+                <active>0</active>
                 <class>button btn primary action</class>
             </button>
         </increazy_checkoutv2>

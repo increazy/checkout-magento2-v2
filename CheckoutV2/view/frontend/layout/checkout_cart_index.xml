@@ -9,7 +9,7 @@
     <body>
         <referenceContainer name="checkout.cart.methods">
             <block
-              class="Magento\Checkout\Block\Onepage\Link"
+              class="Increazy\CheckoutV2\Block\CheckoutButton"
               name="checkout.cart.methods.onepage.bottom"
               template="Increazy_CheckoutV2::checkout-button.phtml"
             />

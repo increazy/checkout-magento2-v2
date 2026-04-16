@@ -47,6 +47,12 @@
 
             <group id="button" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Configurações *Ir para checkout*</label>
+                <field id="active" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Substituir botão de checkout do Magento pelo Increazy</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Quando "Não", o carrinho exibe o botão padrão "Ir para checkout" do Magento, levando ao checkout nativo. Quando "Sim", o botão padrão é substituído pelo botão da Increazy, que abre o checkout headless da Increazy ao ser clicado.</comment>
+                </field>
+
                 <field id="text" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Texto do botão</label>
                     <comment>Caso deixe em branco iremos buscar pelo texto padrão do Magento.</comment>
