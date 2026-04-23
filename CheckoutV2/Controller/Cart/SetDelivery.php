@@ -64,15 +64,29 @@ class SetDelivery extends Controller
             return $this->actionFreteRapido($body);
         }
 
+        $this->quote->load($body->quote_id);
         $this->address->load($body->address_id);
-        $this->quoteAddress->setData($this->address->getData());
 
-        $this->quote->load($body->quote_id)
-            ->setBillingAddress($this->quoteAddress)
-            ->setShippingAddress($this->quoteAddress)
-        ->save();
+        // Remove o entity_id do customer_address para nao corromper a PK do quote_address
+        // (customer_address_entity.entity_id != quote_address.address_id)
+        $addressData = $this->address->getData();
+        unset($addressData['entity_id']);
 
-        $this->quote->getShippingAddress()->setShippingMethod($body->shipping_method);
+        // Usa instancias nativas separadas do quote para billing e shipping.
+        // Passar a mesma instancia para ambos compartilha a referencia e corrompe os dados.
+        $shippingAddress = $this->quote->getShippingAddress();
+        $billingAddress = $this->quote->getBillingAddress();
+
+        $shippingAddress->addData($addressData);
+        $billingAddress->addData($addressData);
+
+        // Forca os vinculos corretos para passar na validacao do QuoteAddressValidator
+        $shippingAddress->setCustomerAddressId($body->address_id);
+        $shippingAddress->setCustomerId($this->quote->getCustomerId());
+        $billingAddress->setCustomerAddressId($body->address_id);
+        $billingAddress->setCustomerId($this->quote->getCustomerId());
+
+        $shippingAddress->setShippingMethod($body->shipping_method);
 
         $this->quote->collectTotals()->save();
 
@@ -83,13 +97,26 @@ class SetDelivery extends Controller
     {
         $this->quote->load($body->quote_id);
         $this->quote->setStoreId($body->store);
-        $this->address->load($this->quote->getShippingAddress()->getId());
-        $this->quoteAddress->setData($this->address->getData());
 
-        $this->quote
-            ->setBillingAddress($this->quoteAddress)
-            ->setShippingAddress($this->quoteAddress)
-            ->save();
+        // Carrega o customer_address correto usando o address_id do body
+        // (o codigo original carregava com o ID do quote_address, o que e invalido)
+        $this->address->load($body->address_id);
+
+        $addressData = $this->address->getData();
+        unset($addressData['entity_id']);
+
+        $shippingAddress = $this->quote->getShippingAddress();
+        $billingAddress = $this->quote->getBillingAddress();
+
+        $shippingAddress->addData($addressData);
+        $billingAddress->addData($addressData);
+
+        $shippingAddress->setCustomerAddressId($body->address_id);
+        $shippingAddress->setCustomerId($this->quote->getCustomerId());
+        $billingAddress->setCustomerAddressId($body->address_id);
+        $billingAddress->setCustomerId($this->quote->getCustomerId());
+
+        $this->quote->save();
 
         $this->shippingRate
             ->setCode($body->shipping_method)
