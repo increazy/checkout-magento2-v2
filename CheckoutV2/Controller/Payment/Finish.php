@@ -99,8 +99,9 @@ class Finish extends Controller
             $this->error('order.creation-failed');
         }
 
-        $order->setState(Order::STATE_NEW);
-        $order->setStatus(Order::STATE_PENDING_PAYMENT);
+        $state = Order::STATE_NEW;
+        $status = $order->getConfig()->getStateDefaultStatus($state) ?: Order::STATE_PENDING_PAYMENT;
+        $order->setState($state)->setStatus($status);
         
         if ($body->tax < 0) {
             $order->setDiscountTaxCompensationAmount($body->tax);
@@ -144,7 +145,8 @@ class Finish extends Controller
                 ->setIsCustomerNotified(true);
 
                 $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                $order->setState($state)->setStatus($state);
+                $status = $order->getConfig()->getStateDefaultStatus($state) ?: $state;
+                $order->setState($state)->setStatus($status);
             }
 
             if ($body->payment_data->status == 'success') {
@@ -167,7 +169,8 @@ class Finish extends Controller
                 }
 
                 $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                $order->setState($state)->setStatus($state);
+                $status = $order->getConfig()->getStateDefaultStatus($state) ?: $state;
+                $order->setState($state)->setStatus($status);
 
                 $order
                     ->addStatusHistoryComment('Pagamento confirmado')
@@ -185,7 +188,8 @@ class Finish extends Controller
                     $order->cancel();
                 }
                 $state = \Magento\Sales\Model\Order::STATE_CANCELED;
-                $order->setState($state)->setStatus($state);
+                $status = $order->getConfig()->getStateDefaultStatus($state) ?: $state;
+                $order->setState($state)->setStatus($status);
             }
 
         } catch (\Exception $e) {

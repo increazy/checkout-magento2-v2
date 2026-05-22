@@ -51,7 +51,8 @@ class Index extends \Magento\Framework\App\Action\Action
                         }
 
                         $state = \Magento\Sales\Model\Order::STATE_PENDING_PAYMENT;
-                        $order->setState($state)->setStatus($state);
+                        $status = $order->getConfig()->getStateDefaultStatus($state) ?: $state;
+                        $order->setState($state)->setStatus($status);
                         break;
                     case 'error':
                     case 'canceled':
@@ -82,7 +83,8 @@ class Index extends \Magento\Framework\App\Action\Action
                             $this->invoiceSender->send($invoice);
                         }
 			$state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                        $order->setState($state)->setStatus($state);
+                        $status = $order->getConfig()->getStateDefaultStatus($state) ?: $state;
+                        $order->setState($state)->setStatus($status);
 			$order->save();
 			
                         $order->addStatusHistoryComment('Pagamento confirmado')

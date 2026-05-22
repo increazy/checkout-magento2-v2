@@ -76,7 +76,8 @@ class Status extends Controller
 //                     $order->hold();
 //                 }
                 $state = \Magento\Sales\Model\Order::STATE_PENDING_PAYMENT;
-                $order->setState($state)->setStatus(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
+                $status = $order->getConfig()->getStateDefaultStatus($state) ?: $state;
+                $order->setState($state)->setStatus($status);
                 $order->addStatusHistoryComment('Status atualizado pela Api status: ' . $order->getStatus() )
                 ->setIsCustomerNotified(false);
                 break;
@@ -87,7 +88,8 @@ class Status extends Controller
                 }
 
                 $state = \Magento\Sales\Model\Order::STATE_PENDING_PAYMENT;
-                $order->setState($state)->setStatus(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
+                $status = $order->getConfig()->getStateDefaultStatus($state) ?: $state;
+                $order->setState($state)->setStatus($status);
                 $order->addStatusHistoryComment('Status atualizado pela Api status: ' . $order->getStatus() )
                 ->setIsCustomerNotified(false);
                 break;
@@ -102,7 +104,8 @@ class Status extends Controller
                     $order->cancel();
                 }
                 $state = \Magento\Sales\Model\Order::STATE_CANCELED;
-                $order->setState($state)->setStatus($state);
+                $status = $order->getConfig()->getStateDefaultStatus($state) ?: $state;
+                $order->setState($state)->setStatus($status);
                 
                 $order->addStatusHistoryComment('Pedido cancelado pela Api')
                  ->setIsCustomerNotified(false);
@@ -130,7 +133,8 @@ class Status extends Controller
                 ->setIsCustomerNotified(true);
 
                 $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                $order->setState($state)->setStatus($state);
+                $status = $order->getConfig()->getStateDefaultStatus($state) ?: $state;
+                $order->setState($state)->setStatus($status);
                 break;
         }
 

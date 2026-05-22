@@ -90,8 +90,9 @@ class Prepare extends Controller
             $this->error('order.creation-failed');
         }
 
-        $order->setState(Order::STATE_NEW);
-        $order->setStatus(Order::STATE_PENDING_PAYMENT);
+        $state = Order::STATE_NEW;
+        $status = $order->getConfig()->getStateDefaultStatus($state) ?: Order::STATE_PENDING_PAYMENT;
+        $order->setState($state)->setStatus($status);
 
 
         try {
@@ -124,7 +125,8 @@ class Prepare extends Controller
                     ->setIsCustomerNotified(true);
 
                     $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                    $order->setState($state)->setStatus($state);
+                    $status = $order->getConfig()->getStateDefaultStatus($state) ?: $state;
+                    $order->setState($state)->setStatus($status);
                     $oM = \Magento\Framework\App\ObjectManager::getInstance();
                     $oM->create('Magento\Sales\Model\Order\Email\Sender\OrderSender')->send($order);
                 }

@@ -105,7 +105,8 @@ class Process extends Controller
                 ->setIsCustomerNotified(true);
 
             $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
-            $this->order->setState($state)->setStatus($state);
+            $status = $this->order->getConfig()->getStateDefaultStatus($state) ?: $state;
+            $this->order->setState($state)->setStatus($status);
         }
 
 
@@ -118,7 +119,8 @@ class Process extends Controller
                 $this->order->cancel();
             }
             $state = \Magento\Sales\Model\Order::STATE_CANCELED;
-            $this->order->setState($state)->setStatus($state);
+            $status = $this->order->getConfig()->getStateDefaultStatus($state) ?: $state;
+            $this->order->setState($state)->setStatus($status);
         }
         
         $this->order->save();
