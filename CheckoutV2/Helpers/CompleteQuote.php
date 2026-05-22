@@ -94,7 +94,7 @@ abstract class CompleteQuote
                 'sku'			  => $item->getProduct()->getSku(),
                 'name'		      => $item->getProduct()->getName(),
                 'url'		      => $item->getProduct()->getUrlKey(),
-                'image'	          => self::getProductImage($item->getProduct()),
+                'image'	          => self::getItemImage($item),
                 'thumbnail'		  => $item->getProduct()->getThumbnail(),
 				'price'			  => $item->getPrice() * $quoteRate,
 				'stock'			  => self::getStock($item->getProduct()),
@@ -192,6 +192,26 @@ abstract class CompleteQuote
         foreach ($images as $image) {
             return $image->getUrl();
         }
+    }
+
+    private static function getItemImage($item)
+    {
+        // Para produtos configuraveis, tenta retornar a imagem do variante (simple product).
+        // Se o variante nao tiver imagem propria, faz fallback para a imagem do produto pai.
+        if ($item->getProductType() === 'configurable') {
+            $simpleOption = $item->getOptionByCode('simple_product');
+            if ($simpleOption) {
+                $childProduct = $simpleOption->getProduct();
+                if ($childProduct) {
+                    $childImage = self::getProductImage($childProduct);
+                    if (!empty($childImage)) {
+                        return $childImage;
+                    }
+                }
+            }
+        }
+
+        return self::getProductImage($item->getProduct());
     }
 
 }
