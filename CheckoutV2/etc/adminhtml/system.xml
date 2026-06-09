@@ -85,6 +85,21 @@
                     <comment>Adicione aqui um código CSS para adicionarmos ao botão, exemplo: "background: white; padding: 10px;"</comment>
                 </field>
             </group>
+
+            <group id="minicart" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Configurações do Minicart</label>
+                <field id="disable" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Desativar o Minicart do Magento</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Quando "Sim", o minicart (ícone do carrinho no topo da loja) é ocultado completamente do front.</comment>
+                </field>
+
+                <field id="disable_checkout_button" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Desativar botão "Finalizar compra" dentro do Minicart</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Quando "Sim", o minicart continua aparecendo com a lista de produtos, mas o botão "Finalizar compra" dentro dele é ocultado. Esta opção é ignorada se o minicart estiver desativado acima.</comment>
+                </field>
+            </group>
         </section>
 
 

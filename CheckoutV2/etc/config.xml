@@ -18,6 +18,10 @@
                 <active>0</active>
                 <class>button btn primary action</class>
             </button>
+            <minicart>
+                <disable>0</disable>
+                <disable_checkout_button>0</disable_checkout_button>
+            </minicart>
         </increazy_checkoutv2>
 
         <increazy_onetap>

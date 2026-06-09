@@ -5,8 +5,10 @@ $scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInte
 $appID   = $scopeConfig->getValue('increazy_general/general/app', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 $isTest  = $scopeConfig->getValue('increazy_general/general/test', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
-$enabledOnetap  = $scopeConfig->getValue('increazy_onetap/general/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-$enabledButton  = $scopeConfig->isSetFlag('increazy_checkoutv2/button/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$enabledOnetap              = $scopeConfig->getValue('increazy_onetap/general/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$enabledButton              = $scopeConfig->isSetFlag('increazy_checkoutv2/button/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$disableMinicart            = $scopeConfig->isSetFlag('increazy_checkoutv2/minicart/disable', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+$disableMinicartCheckoutBtn = $scopeConfig->isSetFlag('increazy_checkoutv2/minicart/disable_checkout_button', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
 $env = $isTest ? '.homolog' : '';
 
@@ -45,6 +47,16 @@ $quoteId = $cart->getQuote()->getId();
 echo '<meta name="increazy-customer-logged" value="' . $customerId . '" />';
 echo '<meta name="increazy-cart-actived" value="' . $quoteId . '" />';
 ?>
+
+<?php if ($disableMinicart || $disableMinicartCheckoutBtn) { ?>
+    <style>
+        <?php if ($disableMinicart) { ?>
+        .minicart-wrapper, .block-minicart { display: none !important; }
+        <?php } else if ($disableMinicartCheckoutBtn) { ?>
+        #top-cart-btn-checkout { display: none !important; }
+        <?php } ?>
+    </style>
+<?php } ?>
 
 <?php if ($enabledButton || $enabledOnetap) { ?>
     <!-- BEGIN INCREAZY CHECKOUT -->
