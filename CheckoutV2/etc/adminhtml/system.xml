@@ -38,6 +38,15 @@
                 </field>
             </group>
 
+            <group id="order_email" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>E-mails de pedido</label>
+                <field id="disable" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Desativar envio de e-mail de pedido</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Quando "Não" (padrão), o e-mail de confirmação de pedido é enviado normalmente ao cliente após a compra. Quando "Sim", o módulo Increazy bloqueia o envio do e-mail de pedido pelo Magento (use apenas se o e-mail será disparado por outro sistema).</comment>
+                </field>
+            </group>
+
             <group id="frontend_redirect" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Redirecionamento do front</label>
                 <field id="active" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">

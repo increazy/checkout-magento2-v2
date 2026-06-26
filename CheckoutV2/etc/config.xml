@@ -8,6 +8,9 @@
             <general>
                 <freterapido>0</freterapido>
             </general>
+            <order_email>
+                <disable>0</disable>
+            </order_email>
             <frontend_redirect>
                 <active>0</active>
             </frontend_redirect>
